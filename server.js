@@ -47,7 +47,7 @@ app.post('/upload', upload.single('document'), (req, res) => {
   pythonProcess.on('close', (code) => {
     if (code === 0) {
       console.log('Python script executed successfully');
-      res.send(`${"File processed"}-${req.file.path}`);
+      res.send(`${"File processed"},${req.file.filename}`);
     } else {
       console.error(`Python script exited with code ${code}`);
       res.status(500).send('Error processing document with Python script');
@@ -57,9 +57,15 @@ app.post('/upload', upload.single('document'), (req, res) => {
 
 // Route to serve the uploaded file for download
 app.get('/download/:filename', (req, res) => {
-  const filePath = req.params.filename;
-  res.download(filePath); // Set disposition and send it.
-});
+    const filePath = `./uploads/${req.params.filename}`;
+    console.log(filePath);
+    res.download(filePath, (err) => {
+      if (err) {
+        console.error('Error downloading file:', err);
+        res.status(500).send('Error downloading file');
+      }
+    });
+  });
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

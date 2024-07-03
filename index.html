@@ -14,6 +14,7 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        $('#download-link').hide();
         $(document).ready(function() {
             $('#upload-form').on('submit', function(e) {
                 e.preventDefault();
@@ -25,11 +26,13 @@
                     contentType: false,
                     processData: false,
                     success: function(data) {
-                        var parts = data.split('-');
+                        var parts = data.split(',');
                         var message = parts[0]; // Original message
                         var fileName = parts[1]; // Filename for download
                         alert(message); // Show the original message
-                        $('#download-link').attr('href', `/download/${fileName}.docx`);
+                        console.log(`${fileName}, html`); // Changed from console.print to console.log
+                        $('#download-link').attr('href', `/download/${fileName.split('/').pop()}`);
+                        $('#download-link').show(); // Show the download link
                     },
                     error: function(err) {
                         console.error(err);
@@ -41,7 +44,7 @@
                 // Simulate processing here
                 alert('Processing...');
                 // After processing, enable the download link
-                $('#download-link').attr('href', `/download/${new Date().getTime()}.docx`);
+                $('#download-link').attr('href', `uploads/${fileName}`);
             });
         });
     </script>
