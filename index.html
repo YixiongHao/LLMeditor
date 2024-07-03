@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload and Process Document</title>
+</head>
+<body>
+    <h1>LLM Editor</h1>
+    <form id="upload-form">
+        <input type="file" name="document" accept=".docx" required>
+        <button type="submit">Upload</button>
+    </form>
+    <a href="" id="download-link" target="_blank">Download Processed Document</a>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#upload-form').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: '/upload',
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        var parts = data.split('-');
+                        var message = parts[0]; // Original message
+                        var fileName = parts[1]; // Filename for download
+                        alert(message); // Show the original message
+                        $('#download-link').attr('href', `/download/${fileName}.docx`);
+                    },
+                    error: function(err) {
+                        console.error(err);
+                    }
+                });
+            });
+
+            $('#process-button').on('click', function() {
+                // Simulate processing here
+                alert('Processing...');
+                // After processing, enable the download link
+                $('#download-link').attr('href', `/download/${new Date().getTime()}.docx`);
+            });
+        });
+    </script>
+</body>
+</html>
